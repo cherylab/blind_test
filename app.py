@@ -1,4 +1,5 @@
 import pandas as pd
+import random
 import requests
 import json
 from pandas.io.json import json_normalize
@@ -161,7 +162,7 @@ cols_keep = ['Instance', 'Symbol', 'StartDate', 'Sales', 'EBIT', 'EBIT_ROIC', 'O
 
 float_cols = cols_keep[3:]
 
-df = combined[cols_keep]
+df = combined[cols_keep].sort_values(by=["Symbol", "StartDate"], ascending=[True, False]).reset_index(drop=True)
 
 for fc in float_cols:
     df[fc] = df[fc].map('{:,.2f}'.format)
@@ -169,7 +170,57 @@ for fc in float_cols:
 def right_align(s, props='text-align: right;'):
     return props
 
-print(df.columns)
-print(df.info())
+# st.write(df.style.applymap(right_align))
+# st.write(df)
 
-st.write(df.style.applymap(right_align))
+def shuffle(options):
+    order = [x for x in range(1, len(options) + 1)]
+    random.shuffle(order)
+
+    compOrderDict = {}
+    for i in range(len(options)):
+        compOrderDict[order[i]] = options[i]
+
+    return compOrderDict, order
+
+def blindPage():
+    st.title('Blind Test Categorization')
+
+    test_expander = st.expander("Possible Companies", expanded=True)
+    with test_expander:
+        companyOptions = sorted(df.Symbol.unique())
+
+        options = st.multiselect(label="Companies Included in Blind Test",
+                                 options=companyOptions,
+                                 default=["AAPL-US", "MSFT-US", "GOOG-US"])
+
+    compOrderDict, order = shuffle(options)
+
+    testdf = df[df.Symbol.isin(options)]
+
+    index = st.number_input(label="Company #",
+                            min_value=min(order),
+                            max_value=max(order),
+                            value=1)
+
+    reduce_cols = ['StartDate', 'Sales', 'EBIT', 'EBIT_ROIC', 'OCF',
+             'OCF_ROIC', 'ROA', 'CurrentAssets', 'Cash', 'LT_Debt',
+             'AccountsPayable', 'NetFixedAssets', 'TangibleCapital']
+
+    compdf = testdf[testdf.Symbol==compOrderDict[index]][reduce_cols].set_index("StartDate")
+
+    st.write(compdf.style.applymap(right_align))
+
+
+    # st.write(testdf)
+
+
+def create_app_with_pages():
+    # CREATE PAGES IN APP
+    app = MultiApp()
+    app.add_app("Blind Test", blindPage, [])
+    # app.add_app("Call & Put Volumes", callput_page, [])
+    app.run(logo_path='logo.png')
+
+if __name__ == '__main__':
+    create_app_with_pages()
