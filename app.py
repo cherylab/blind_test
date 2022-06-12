@@ -214,6 +214,9 @@ def blindPage():
 
     compOrderDict, order = shuffle(options)
 
+    st.session_state['compOrderDict'] = compOrderDict
+    st.session_state['order'] = order
+
     testdf = df[df.Symbol.isin(options)]
 
     st.write("<br>", unsafe_allow_html=True)
