@@ -24,33 +24,40 @@ import plot_settings
 from multiapp import MultiApp
 import streamlit as st
 
+st.set_page_config(layout='wide')
+
 # LOAD FILES
-# summary - sorted list
-# chgsort = pd.read_csv('list_of_ten_2020.csv', na_values=['#VALUE!', '#DIV/0!', '#SPILL!'])
-# historical roic
-roic_import = pd.read_csv('new_roic_historical_iwv_2016_2020_acq_nr.csv', low_memory=False,
-                         na_values=['#VALUE!', '#DIV/0!', '#SPILL!'])
-# beta
-betadf = pd.read_csv('upside_downside_trailing_beta_iwv_2015_2019.csv', low_memory=False,
-                    na_values=['#VALUE!', '#DIV/0!', '#SPILL!'])
-# momentum
-momo2021df = pd.read_csv('momentum_lookup_subtract_iwv_2016_2020.csv', low_memory=False,
+@st.cache
+def load_files():
+    # summary - sorted list
+    # chgsort = pd.read_csv('list_of_ten_2020.csv', na_values=['#VALUE!', '#DIV/0!', '#SPILL!'])
+    # historical roic
+    roic_importL = pd.read_csv('new_roic_historical_iwv_2016_2020_acq_nr.csv', low_memory=False,
+                             na_values=['#VALUE!', '#DIV/0!', '#SPILL!'])
+    # beta
+    betadfL = pd.read_csv('upside_downside_trailing_beta_iwv_2015_2019.csv', low_memory=False,
                         na_values=['#VALUE!', '#DIV/0!', '#SPILL!'])
-# prior year
-prioryear = pd.read_csv('new_roic_historical_iwv_2020_acq_nr_one_day_offset.csv',
-                        low_memory=False, na_values=['#VALUE!', '#DIV/0!', '#SPILL!'])
-# beta2020
-beta20df = pd.read_csv('upside_downside_trailing_beta_iwv_2020_20201231.csv',
-                      low_memory=False, na_values=['#VALUE!', '#DIV/0!', '#SPILL!'])
-# 2022 import
-import_2022 = pd.read_csv('new_roic_historical_iwv_2021_acq_nr_20211231_dpz_fix.csv',
-                         low_memory=False, na_values=['#VALUE!', '#DIV/0!', '#SPILL!'])
-# beta2021
-beta21df = pd.read_csv('upside_downside_trailing_beta_iwv_2021_20211231.csv',
-                      low_memory=False, na_values=['#VALUE!', '#DIV/0!', '#SPILL!'])
+    # momentum
+    momo2021dfL = pd.read_csv('momentum_lookup_subtract_iwv_2016_2020.csv', low_memory=False,
+                            na_values=['#VALUE!', '#DIV/0!', '#SPILL!'])
+    # prior year
+    prioryearL = pd.read_csv('new_roic_historical_iwv_2020_acq_nr_one_day_offset.csv',
+                            low_memory=False, na_values=['#VALUE!', '#DIV/0!', '#SPILL!'])
+    # beta2020
+    beta20dfL = pd.read_csv('upside_downside_trailing_beta_iwv_2020_20201231.csv',
+                          low_memory=False, na_values=['#VALUE!', '#DIV/0!', '#SPILL!'])
+    # 2022 import
+    import_2022L = pd.read_csv('new_roic_historical_iwv_2021_acq_nr_20211231_dpz_fix.csv',
+                             low_memory=False, na_values=['#VALUE!', '#DIV/0!', '#SPILL!'])
+    # beta2021
+    beta21dfL = pd.read_csv('upside_downside_trailing_beta_iwv_2021_20211231.csv',
+                          low_memory=False, na_values=['#VALUE!', '#DIV/0!', '#SPILL!'])
+
+    return roic_importL, betadfL, momo2021dfL, prioryearL, beta20dfL, import_2022L, beta21dfL
 
 # CREATE ROIC_FILTERED
-def create_roic_filtered(roic_import, betadf, momo2021df):
+@st.cache
+def format_dfs(roic_import, betadf, momo2021df, prioryear, beta20df, import_2022, beta21df):
     # combine symbol and start date to create unique ID
     roic_import['Instance'] = roic_import['Symbol'].astype(str) + '_' + \
                               roic_import['StartDate'].astype(str)
@@ -83,8 +90,47 @@ def create_roic_filtered(roic_import, betadf, momo2021df):
     roic_filtered = roic_filtered.merge(momo2021df, on='Instance', how='inner'). \
         set_index('Instance')
 
-    return roic_filtered
+    roic_filtered = create_features(roic_filtered)
 
+    # format prioryear
+    # filter to only 12/31/20 start dates
+    prioryear = prioryear[prioryear['StartDate'] == '12/31/2020']
+
+    # create the same unique ID column as in roic_filtered
+    prioryear['Instance'] = prioryear['Symbol'].astype(str) + '_' + prioryear['StartDate']. \
+        astype(str)
+
+    # create features using the above function for ebit, ocf, fcf
+    prioryear = create_features(prioryear)
+
+    # filter beta20df to columns you want to merge into prioryear
+    beta20df = beta20df[['Instance', 'Beta', 'UpsideBeta', 'DownsideBeta']]
+
+    # merge beta20df into prioryear
+    prioryear = prioryear.merge(beta20df, on='Instance', how='inner').set_index('Instance')
+
+    combined = pd.concat([roic_filtered, prioryear], sort=True).fillna(0)
+
+    #format 2022
+    # create the same unique ID column as in other dfs
+    import_2022['Instance'] = import_2022['Symbol'].astype(str) + '_' + import_2022['StartDate']. \
+        astype(str)
+
+    # fill missing values with zeros
+    import_2022 = import_2022.fillna(0)
+
+    # create features using the above function for ebit, ocf, fcf
+    import_2022 = create_features(import_2022)
+
+    # filter beta21df to columns you want to merge into import_2022
+    beta21df = beta21df[['Instance', 'Beta', 'UpsideBeta', 'DownsideBeta']].fillna(0)
+
+    # merge beta21df into import_2022
+    import_2022 = import_2022.merge(beta21df, on='Instance', how='inner').set_index('Instance')
+
+    combined = pd.concat([combined, import_2022], sort=True).reset_index()
+
+    return roic_import, betadf, momo2021df, prioryear, beta20df, import_2022, beta21df, combined
 
 # CREATE FEATURES IN ROIC_FILTERED
 def create_features(df):
@@ -108,53 +154,21 @@ def create_features(df):
 
     return df
 
-# FORMAT PRIORYEAR
-def format_prioryear(prioryear, beta20df):
-    # filter to only 12/31/20 start dates
-    prioryear = prioryear[prioryear['StartDate'] == '12/31/2020']
 
-    # create the same unique ID column as in roic_filtered
-    prioryear['Instance'] = prioryear['Symbol'].astype(str) + '_' + prioryear['StartDate']. \
-        astype(str)
+roic_importL, betadfL, momo2021dfL, prioryearL, beta20dfL, import_2022L, beta21dfL = load_files()
 
-    # create features using the above function for ebit, ocf, fcf
-    prioryear = create_features(prioryear)
+roic_import = roic_importL.copy()
+betadf = betadfL.copy()
+momo2021df = momo2021dfL.copy()
+prioryear = prioryearL.copy()
+beta20df = beta20dfL.copy()
+import_2022 = import_2022L.copy()
+beta21df = beta21dfL.copy()
 
-    # filter beta20df to columns you want to merge into prioryear
-    beta20df = beta20df[['Instance', 'Beta', 'UpsideBeta', 'DownsideBeta']]
+roic_import, betadf, momo2021df, prioryear, beta20df, import_2022, beta21df, combined = format_dfs(
+roic_import, betadf, momo2021df, prioryear, beta20df, import_2022, beta21df
+)
 
-    # merge beta20df into prioryear
-    prioryear = prioryear.merge(beta20df, on='Instance', how='inner').set_index('Instance')
-
-    return prioryear
-
-# FORMAT 2022
-def format_2022(import_2022, beta21df):
-    # create the same unique ID column as in other dfs
-    import_2022['Instance'] = import_2022['Symbol'].astype(str) + '_' + import_2022['StartDate']. \
-        astype(str)
-
-    # fill missing values with zeros
-    import_2022 = import_2022.fillna(0)
-
-    # create features using the above function for ebit, ocf, fcf
-    import_2022 = create_features(import_2022)
-
-    # filter beta21df to columns you want to merge into import_2022
-    beta21df = beta21df[['Instance', 'Beta', 'UpsideBeta', 'DownsideBeta']].fillna(0)
-
-    # merge beta21df into import_2022
-    import_2022 = import_2022.merge(beta21df, on='Instance', how='inner').set_index('Instance')
-
-    return import_2022
-
-roic_filtered = create_roic_filtered(roic_import, betadf, momo2021df)
-roic_filtered = create_features(roic_filtered)
-prioryear = format_prioryear(prioryear, beta20df)
-combined = pd.concat([roic_filtered, prioryear], sort=True).fillna(0)
-
-import_2022 = format_2022(import_2022, beta21df)
-combined = pd.concat([combined, import_2022], sort=True).reset_index()
 
 cols_keep = ['Instance', 'Symbol', 'StartDate', 'Sales', 'EBIT', 'EBIT_ROIC', 'OCF',
              'OCF_ROIC', 'ROA', 'CurrentAssets', 'Cash', 'LT_Debt',
@@ -183,6 +197,14 @@ def shuffle(options):
 
     return compOrderDict, order
 
+def listToValues(lst):
+    values = lst.join(', ')
+    return values
+
+def addToGood(goodList, index):
+    goodList.append(index)
+    return goodList
+
 def blindPage():
     st.title('Blind Test Categorization')
 
@@ -198,10 +220,38 @@ def blindPage():
 
     testdf = df[df.Symbol.isin(options)]
 
-    index = st.number_input(label="Company #",
+    box1, s1, box2, s2, box3 = st.columns((1,.02,1,.02,1))
+
+    goodList = []
+    badList = []
+    unsureList = []
+
+    goodCompanies = box1.text_area(label="Good Companies",
+                                   value=goodList,
+                                   on_change=listToValues,
+                                   args=(goodList),
+                                   placeholder="None")
+
+    unsureCompanies = box1.text_area(label="Unsure Companies",
+                                   value=unsureList,
+                                   on_change=listToValues,
+                                   args=unsureList,
+                                   placeholder="None")
+
+    badCompanies = box1.text_area(label="Bad Companies",
+                                   value=badList,
+                                   on_change=listToValues,
+                                   args=badList,
+                                   placeholder="None")
+
+    col1, sp1, col2, sp2, col3, sp3, col4 = st.columns((1,.02,1,.02,1,.02,1))
+    index = col1.number_input(label="Company #",
                             min_value=min(order),
                             max_value=max(order),
                             value=1)
+
+    addGood = col2.button(label="Good Company", help="Add company to 'Good' list",
+                          on_click=addToGood, args=(goodList,index))
 
     reduce_cols = ['StartDate', 'Sales', 'EBIT', 'EBIT_ROIC', 'OCF',
              'OCF_ROIC', 'ROA', 'CurrentAssets', 'Cash', 'LT_Debt',
