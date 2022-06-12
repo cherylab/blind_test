@@ -214,8 +214,13 @@ def blindPage():
 
     compOrderDict, order = shuffle(options)
 
-    st.session_state['compOrderDict'] = compOrderDict
-    st.session_state['order'] = order
+    if "compOrderDict" not in st.session_state:
+        st.session_state['compOrderDict'] = compOrderDict
+
+    if "order" not in st.session_state:
+        st.session_state['order'] = order
+
+    st.write(st.session_state)
 
     testdf = df[df.Symbol.isin(options)]
 
