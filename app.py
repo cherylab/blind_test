@@ -254,6 +254,7 @@ def blindPage():
     if col4.button(label="Add to Bad Companies"):#, on_click=addToBad, args=(index,))
         badList.append(str(index))
 
+    st.write("<br>", unsafe_allow_html=True)
     box1, s1, box2, s2, box3 = st.columns((.1, .02, .1, .02, .1))
     goodCompanies = box1.text_input(label="Good Companies",
                                     value=(', ').join(goodList),
@@ -275,8 +276,12 @@ def blindPage():
 
     st.write(compdf.style.applymap(right_align))
 
+    st.write("<br><br>", unsafe_allow_html=True)
+    if st.button(label="Show Company Mapping"):
+        for (k,v) in compOrderDict.items():
+            st.write(f"{k}: {v}")
+        # st.write(compOrderDict)
 
-    # st.write(testdf)
 
 
 def create_app_with_pages():
