@@ -201,10 +201,6 @@ def listToValues(lst):
     values = lst.join(', ')
     return values
 
-def addToGood(goodList, index):
-    goodList.append(index)
-    return goodList
-
 def blindPage():
     st.title('Blind Test Categorization')
 
@@ -220,38 +216,56 @@ def blindPage():
 
     testdf = df[df.Symbol.isin(options)]
 
-    box1, s1, box2, s2, box3 = st.columns((1,.02,1,.02,1))
+    st.write("<br>", unsafe_allow_html=True)
 
     goodList = []
     badList = []
     unsureList = []
 
-    goodCompanies = box1.text_area(label="Good Companies",
-                                   value=goodList,
-                                   on_change=listToValues,
-                                   args=(goodList),
-                                   placeholder="None")
+    def addToGood(index):
+        goodList.append(str(index))
+        return goodList
 
-    unsureCompanies = box1.text_area(label="Unsure Companies",
-                                   value=unsureList,
-                                   on_change=listToValues,
-                                   args=unsureList,
-                                   placeholder="None")
+    def addToUnsure(index):
+        unsureList.append(index)
+        return unsureList
 
-    badCompanies = box1.text_area(label="Bad Companies",
-                                   value=badList,
-                                   on_change=listToValues,
-                                   args=badList,
-                                   placeholder="None")
+    def addToBad(index):
+        badList.append(index)
+        return badList
 
-    col1, sp1, col2, sp2, col3, sp3, col4 = st.columns((1,.02,1,.02,1,.02,1))
+    st.write("<br>", unsafe_allow_html=True)
+    col1, sp1, col2, sp2, col3, sp3, col4 = st.columns((.2,.02,.2,.02,.2,.02,.2))
     index = col1.number_input(label="Company #",
                             min_value=min(order),
                             max_value=max(order),
                             value=1)
 
-    addGood = col2.button(label="Good Company", help="Add company to 'Good' list",
-                          on_click=addToGood, args=(goodList,index))
+    col2.write("<br>", unsafe_allow_html=True)
+    if col2.button(label="Add to Good Companies"):#, on_click=addToGood, args=(index,))
+        goodList.append(str(index))
+
+
+    col3.write("<br>", unsafe_allow_html=True)
+    if col3.button(label="Add to Unsure Companies"):#, on_click=addToUnsure, args=(index,))
+        unsureList.append(str(index))
+
+    col4.write("<br>", unsafe_allow_html=True)
+    if col4.button(label="Add to Bad Companies"):#, on_click=addToBad, args=(index,))
+        badList.append(str(index))
+
+    box1, s1, box2, s2, box3 = st.columns((.1, .02, .1, .02, .1))
+    goodCompanies = box1.text_input(label="Good Companies",
+                                    value=(', ').join(goodList),
+                                    placeholder="None")
+
+    unsureCompanies = box2.text_input(label="Unsure Companies",
+                                      value=(', ').join(unsureList),
+                                      placeholder="None")
+
+    badCompanies = box3.text_input(label="Bad Companies",
+                                   value=(', ').join(badList),
+                                   placeholder="None")
 
     reduce_cols = ['StartDate', 'Sales', 'EBIT', 'EBIT_ROIC', 'OCF',
              'OCF_ROIC', 'ROA', 'CurrentAssets', 'Cash', 'LT_Debt',
