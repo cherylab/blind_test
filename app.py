@@ -266,21 +266,24 @@ def blindPage():
     box1, s1, box2, s2, box3 = st.columns((.1, .02, .1, .02, .1))
     goodCompanies = box1.text_input(label="Good Companies",
                                     value=(', ').join(goodList),
-                                    placeholder="None")
+                                    placeholder="None",
+                                    key="goodbox")
 
     unsureCompanies = box2.text_input(label="Unsure Companies",
                                       value=(', ').join(unsureList),
-                                      placeholder="None")
+                                      placeholder="None",
+                                      key="unsurebox")
 
     badCompanies = box3.text_input(label="Bad Companies",
                                    value=(', ').join(badList),
-                                   placeholder="None")
+                                   placeholder="None",
+                                   key="badbox")
 
     reduce_cols = ['StartDate', 'Sales', 'EBIT', 'EBIT_ROIC', 'OCF',
              'OCF_ROIC', 'ROA', 'CurrentAssets', 'Cash', 'LT_Debt',
              'AccountsPayable', 'NetFixedAssets', 'TangibleCapital']
 
-    compdf = testdf[testdf.Symbol==compOrderDict[index]][reduce_cols].set_index("StartDate")
+    compdf = testdf[testdf.Symbol==st.session_state.compOrderDict[index]][reduce_cols].set_index("StartDate")
 
     st.write(compdf.style.applymap(right_align))
 
