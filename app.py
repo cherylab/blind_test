@@ -230,9 +230,9 @@ def blindPage():
     badList = []
     unsureList = []
 
-    st.session_state["goodList"] = []
-    st.session_state["badList"] = []
-    st.session_state["unsureList"] = []
+    # st.session_state["goodList"] = []
+    # st.session_state["badList"] = []
+    # st.session_state["unsureList"] = []
 
     st.write("good", goodList)
     st.write("bad", badList)
