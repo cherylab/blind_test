@@ -274,17 +274,17 @@ def blindPage():
     st.write("<br>", unsafe_allow_html=True)
     box1, s1, box2, s2, box3 = st.columns((.1, .02, .1, .02, .1))
     goodCompanies = box1.text_input(label="Good Companies",
-                                    value=(', ').join(st.session_state.goodList),
+                                    # value=st.session_state.goodbox,
                                     placeholder="None",
                                     key="goodbox")
 
     unsureCompanies = box2.text_input(label="Unsure Companies",
-                                      value=(', ').join(st.session_state.unsureList),
+                                      # value=(', ').join(st.session_state.unsureList),
                                       placeholder="None",
                                       key="unsurebox")
 
     badCompanies = box3.text_input(label="Bad Companies",
-                                   value=(', ').join(st.session_state.badList),
+                                   # value=(', ').join(st.session_state.badList),
                                    placeholder="None",
                                    key="badbox")
 
