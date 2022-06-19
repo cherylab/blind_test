@@ -226,29 +226,9 @@ def blindPage():
 
     st.write("<br>", unsafe_allow_html=True)
 
-    goodList = []
-    badList = []
-    unsureList = []
-
-    # st.session_state["goodList"] = []
-    # st.session_state["badList"] = []
-    # st.session_state["unsureList"] = []
-
-    st.write("good", goodList)
-    st.write("bad", badList)
-    st.write("unsure", unsureList)
-
-    def addToGood(index):
-        goodList.append(str(index))
-        return goodList
-
-    def addToUnsure(index):
-        unsureList.append(index)
-        return unsureList
-
-    def addToBad(index):
-        badList.append(index)
-        return badList
+    st.session_state["goodList"] = []
+    st.session_state["badList"] = []
+    st.session_state["unsureList"] = []
 
     st.write("<br>", unsafe_allow_html=True)
     col1, sp1, col2, sp2, col3, sp3, col4 = st.columns((.2,.02,.2,.02,.2,.02,.2))
@@ -259,31 +239,31 @@ def blindPage():
 
     col2.write("<br>", unsafe_allow_html=True)
     if col2.button(label="Add to Good Companies"):#, on_click=addToGood, args=(index,))
-        goodList.append(str(index))
+        st.session_state["goodList"].append(str(index))
 
 
     col3.write("<br>", unsafe_allow_html=True)
     if col3.button(label="Add to Unsure Companies"):#, on_click=addToUnsure, args=(index,))
-        unsureList.append(str(index))
+        st.session_state.unsureList.append(str(index))
 
     col4.write("<br>", unsafe_allow_html=True)
     if col4.button(label="Add to Bad Companies"):#, on_click=addToBad, args=(index,))
-        badList.append(str(index))
+        st.session_state.badList.append(str(index))
 
     st.write("<br>", unsafe_allow_html=True)
     box1, s1, box2, s2, box3 = st.columns((.1, .02, .1, .02, .1))
     goodCompanies = box1.text_input(label="Good Companies",
-                                    value=(', ').join(goodList),
+                                    value=(', ').join(st.session_state.goodList),
                                     placeholder="None",
                                     key="goodbox")
 
     unsureCompanies = box2.text_input(label="Unsure Companies",
-                                      value=(', ').join(unsureList),
+                                      value=(', ').join(st.session_state.unsureList),
                                       placeholder="None",
                                       key="unsurebox")
 
     badCompanies = box3.text_input(label="Bad Companies",
-                                   value=(', ').join(badList),
+                                   value=(', ').join(st.session_state.badList),
                                    placeholder="None",
                                    key="badbox")
 
