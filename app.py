@@ -237,18 +237,43 @@ def blindPage():
                             max_value=max(order),
                             value=1)
 
+    # # the callback function for the button will add 1 to the
+    # # slider value up to 10
+    # def plus_one():
+    #     if st.session_state["slider"] < 10:
+    #         st.session_state.slider += 1
+    #     else:
+    #         pass
+    #     return
+    #
+    # # when creating the button, assign the name of your callback
+    # # function to the on_click parameter
+    # add_one = st.button("Add one to the slider", on_click=plus_one, key="add_one")
+    #
+    # # create the slider
+    # slide_val = st.slider("Pick a number", 0, 10, key="slider")
+
+    def addGoodComp():
+        st.session_state.goodbox.append(index)
+        return
+
+    def addUnsureComp():
+        st.session_state.unsurebox.append(index)
+        return
+
+    def addBadComp():
+        st.session_state.badbox.append(index)
+        return
+
     col2.write("<br>", unsafe_allow_html=True)
-    if col2.button(label="Add to Good Companies"):#, on_click=addToGood, args=(index,))
-        st.session_state["goodList"].append(str(index))
+    addGoodComp = col2.button(label="Add to Good Companies", key="addGood", on_click=addGoodComp)
 
 
     col3.write("<br>", unsafe_allow_html=True)
-    if col3.button(label="Add to Unsure Companies"):#, on_click=addToUnsure, args=(index,))
-        st.session_state.unsureList.append(str(index))
+    addUnsureComp = col3.button(label="Add to Unsure Companies", key="addUnsure", on_click=addUnsureComp)
 
     col4.write("<br>", unsafe_allow_html=True)
-    if col4.button(label="Add to Bad Companies"):#, on_click=addToBad, args=(index,))
-        st.session_state.badList.append(str(index))
+    addBadComp = col4.button(label="Add to Bad Companies", key="addBad", on_click=addBadComp)
 
     st.write("<br>", unsafe_allow_html=True)
     box1, s1, box2, s2, box3 = st.columns((.1, .02, .1, .02, .1))
