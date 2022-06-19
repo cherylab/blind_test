@@ -226,10 +226,6 @@ def blindPage():
 
     st.write("<br>", unsafe_allow_html=True)
 
-    st.session_state["goodList"] = []
-    st.session_state["badList"] = []
-    st.session_state["unsureList"] = []
-
     st.write("<br>", unsafe_allow_html=True)
     col1, sp1, col2, sp2, col3, sp3, col4 = st.columns((.2,.02,.2,.02,.2,.02,.2))
     index = col1.number_input(label="Company #",
@@ -254,15 +250,15 @@ def blindPage():
     # slide_val = st.slider("Pick a number", 0, 10, key="slider")
 
     def addGoodComp():
-        st.session_state.goodbox.append(index)
+        st.session_state.goodbox += f"{index} "
         return
 
     def addUnsureComp():
-        st.session_state.unsurebox.append(index)
+        st.session_state.unsurebox += f"{index} "
         return
 
     def addBadComp():
-        st.session_state.badbox.append(index)
+        st.session_state.badbox += f"{index} "
         return
 
     col2.write("<br>", unsafe_allow_html=True)
