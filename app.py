@@ -26,6 +26,8 @@ import streamlit as st
 
 st.set_page_config(layout='wide')
 
+# shuffle order changes when click a button, so numbers in table not always reliable
+
 # LOAD FILES
 @st.cache
 def load_files():
@@ -189,11 +191,16 @@ def right_align(s, props='text-align: right;'):
 
 def shuffle(options):
     order = [x for x in range(1, len(options) + 1)]
+    st.write("orig order", order)
     random.shuffle(order)
+    st.write("shuffle order", order)
+    st.write("orig options", options)
 
     compOrderDict = {}
     for i in range(len(options)):
         compOrderDict[order[i]] = options[i]
+
+    st.write("mapping of shuffle order to orig options", compOrderDict)
 
     return compOrderDict, order
 
@@ -214,13 +221,15 @@ def blindPage():
 
     compOrderDict, order = shuffle(options)
 
+    st.write("new comporderdict", compOrderDict)
+
     if "compOrderDict" not in st.session_state:
         st.session_state['compOrderDict'] = compOrderDict
 
     if "order" not in st.session_state:
         st.session_state['order'] = order
 
-    st.write(st.session_state)
+    st.write("session state", st.session_state)
 
     testdf = df[df.Symbol.isin(options)]
 
@@ -250,7 +259,10 @@ def blindPage():
     # slide_val = st.slider("Pick a number", 0, 10, key="slider")
 
     def addGoodComp():
-        st.session_state.goodbox += f"{index} "
+        if st.session_state.goodbox == "":
+            st.session_state.goodbox += f"{index} "
+        else:
+            st.session_state.goodbox += f", {index}"
         return
 
     def addUnsureComp():
@@ -261,27 +273,27 @@ def blindPage():
         st.session_state.badbox += f"{index} "
         return
 
-    col2.write("<br>", unsafe_allow_html=True)
-    addGoodComp = col2.button(label="Add to Good Companies", key="addGood", on_click=addGoodComp)
-
-
-    col3.write("<br>", unsafe_allow_html=True)
-    addUnsureComp = col3.button(label="Add to Unsure Companies", key="addUnsure", on_click=addUnsureComp)
-
-    col4.write("<br>", unsafe_allow_html=True)
-    addBadComp = col4.button(label="Add to Bad Companies", key="addBad", on_click=addBadComp)
-
     st.write("<br>", unsafe_allow_html=True)
     box1, s1, box2, s2, box3 = st.columns((.1, .02, .1, .02, .1))
+
+    box1.write("<br>", unsafe_allow_html=True)
+    addGoodComp = box1.button(label="Add to Good Companies", key="addGood", on_click=addGoodComp)
+
     goodCompanies = box1.text_input(label="Good Companies",
                                     # value=st.session_state.goodbox,
                                     placeholder="None",
                                     key="goodbox")
 
+    box2.write("<br>", unsafe_allow_html=True)
+    addUnsureComp = box2.button(label="Add to Unsure Companies", key="addUnsure", on_click=addUnsureComp)
+
     unsureCompanies = box2.text_input(label="Unsure Companies",
                                       # value=(', ').join(st.session_state.unsureList),
                                       placeholder="None",
                                       key="unsurebox")
+
+    box3.write("<br>", unsafe_allow_html=True)
+    addBadComp = box3.button(label="Add to Bad Companies", key="addBad", on_click=addBadComp)
 
     badCompanies = box3.text_input(label="Bad Companies",
                                    # value=(', ').join(st.session_state.badList),
