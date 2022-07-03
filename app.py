@@ -317,8 +317,9 @@ def blindPage():
     st.write("<br><br>", unsafe_allow_html=True)
     if st.button(label="Show Company Mapping"):
         st.write(st.session_state.compOrderDict)
+        st.write(sorted(st.session_state.compOrderDict))
         st.write(sorted(st.session_state.compOrderDict.items()))
-        for (k,v) in dict(sorted(st.session_state.compOrderDict.items())):
+        for (k,v) in st.session_state.compOrderDict.items():
             st.write(f"{k}: {v}")
         # st.write(compOrderDict)
 
