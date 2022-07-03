@@ -26,7 +26,18 @@ import streamlit as st
 
 st.set_page_config(layout='wide')
 
-# shuffle order changes when click a button, so numbers in table not always reliable
+st.markdown("""<style>
+div[data-testid^="stHorizontalBlock"] > button:nth-child(1) {
+background-color: "red";
+}
+
+div[data-testid="stHorizontalBlock"] {
+background-color: "green";
+}
+
+""", unsafe_allow_html=True)
+
+# .first-of-type button {
 
 # LOAD FILES
 @st.cache
@@ -191,16 +202,16 @@ def right_align(s, props='text-align: right;'):
 
 def shuffle(options):
     order = [x for x in range(1, len(options) + 1)]
-    st.write("orig order", order)
+    # st.write("orig order", order)
     random.shuffle(order)
-    st.write("shuffle order", order)
-    st.write("orig options", options)
+    # st.write("shuffle order", order)
+    # st.write("orig options", options)
 
     compOrderDict = {}
     for i in range(len(options)):
         compOrderDict[order[i]] = options[i]
 
-    st.write("mapping of shuffle order to orig options", compOrderDict)
+    # st.write("mapping of shuffle order to orig options", compOrderDict)
 
     return compOrderDict, order
 
@@ -221,7 +232,7 @@ def blindPage():
 
     compOrderDict, order = shuffle(options)
 
-    st.write("new comporderdict", compOrderDict)
+    # st.write("new comporderdict", compOrderDict)
 
     if "compOrderDict" not in st.session_state:
         st.session_state['compOrderDict'] = compOrderDict
@@ -229,7 +240,7 @@ def blindPage():
     if "order" not in st.session_state:
         st.session_state['order'] = order
 
-    st.write("session state", st.session_state)
+    # st.write("session state", st.session_state)
 
     testdf = df[df.Symbol.isin(options)]
 
