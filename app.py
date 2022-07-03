@@ -314,18 +314,11 @@ def blindPage():
 
     st.write(compdf.style.applymap(right_align))
 
+    st.write("<br><br>", unsafe_allow_html=True)
     answer_expander = st.expander("Show Company Mapping", expanded=False)
     with answer_expander:
         for o in sorted(st.session_state.compOrderDict):
             st.write(f"{o}: {st.session_state.compOrderDict[o]}")
-
-    # st.write("<br><br>", unsafe_allow_html=True)
-    # if st.button(label="Show Company Mapping"):
-    #     st.write(st.session_state.compOrderDict)
-    #     st.write(sorted(st.session_state.compOrderDict))
-    #
-    #     for o in sorted(st.session_state.compOrderDict):
-    #         st.write(f"{o}: {st.session_state.compOrderDict[o]}")
 
 
 
