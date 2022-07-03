@@ -319,6 +319,9 @@ def blindPage():
         st.write(st.session_state.compOrderDict)
         st.write(sorted(st.session_state.compOrderDict))
         st.write(sorted(st.session_state.compOrderDict.items()))
+        for o in sorted(st.session_state.compOrderDict):
+            st.write(f"{o}: {st.session_state.compOrderDict[o]}")
+
         for (k,v) in st.session_state.compOrderDict.items():
             st.write(f"{k}: {v}")
         # st.write(compOrderDict)
