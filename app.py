@@ -260,17 +260,23 @@ def blindPage():
 
     def addGoodComp():
         if st.session_state.goodbox == "":
-            st.session_state.goodbox += f"{index} "
+            st.session_state.goodbox += f"{index}"
         else:
             st.session_state.goodbox += f", {index}"
         return
 
     def addUnsureComp():
-        st.session_state.unsurebox += f"{index} "
+        if st.session_state.unsurebox == "":
+            st.session_state.unsurebox += f"{index}"
+        else:
+            st.session_state.unsurebox += f", {index}"
         return
 
     def addBadComp():
-        st.session_state.badbox += f"{index} "
+        if st.session_state.badbox == "":
+            st.session_state.badbox += f"{index}"
+        else:
+            st.session_state.badbox += f", {index}"
         return
 
     st.write("<br>", unsafe_allow_html=True)
@@ -310,7 +316,7 @@ def blindPage():
 
     st.write("<br><br>", unsafe_allow_html=True)
     if st.button(label="Show Company Mapping"):
-        for (k,v) in compOrderDict.items():
+        for (k,v) in st.session_state.compOrderDict.items():
             st.write(f"{k}: {v}")
         # st.write(compOrderDict)
 
