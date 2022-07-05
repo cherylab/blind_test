@@ -26,6 +26,10 @@ import streamlit as st
 
 st.set_page_config(layout='wide')
 
+# TO DO
+# 1. update everything if change the company options
+# 2. format the buttons (not needed)
+
 st.markdown("""<style>
 div[data-testid^="stHorizontalBlock"] > button:nth-child(1) {
 background-color: "red";
@@ -240,7 +244,7 @@ def blindPage():
     if "order" not in st.session_state:
         st.session_state['order'] = order
 
-    # st.write("session state", st.session_state)
+    st.write("session state", st.session_state)
 
     testdf = df[df.Symbol.isin(options)]
 
