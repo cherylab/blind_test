@@ -324,6 +324,7 @@ def blindPage():
 
     compdf = testdf[testdf.Symbol==st.session_state.compOrderDict[index]][reduce_cols].set_index("StartDate")
 
+    st.write("<br>", unsafe_allow_html=True)
     st.write(compdf.style.applymap(right_align))
 
     st.write("<br><br>", unsafe_allow_html=True)
