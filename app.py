@@ -207,9 +207,9 @@ def right_align(s, props='text-align: right;'):
 def reset_state():
     del st.session_state.order
     del st.session_state.compOrderDict
-    del st.session_state.goodbox
-    del st.session_state.unsurebox
-    del st.session_state.badbox
+    st.session_state.goodbox = ""
+    st.session_state.unsurebox = ""
+    st.session_state.badbox = ""
     del st.session_state.addGood
     del st.session_state.addUnsure
     del st.session_state.addBad
