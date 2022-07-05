@@ -257,7 +257,7 @@ def blindPage():
     if "order" not in st.session_state:
         st.session_state['order'] = order
 
-    st.write("session state", st.session_state)
+    # st.write("session state", st.session_state)
 
     testdf = df[df.Symbol.isin(options)]
 
