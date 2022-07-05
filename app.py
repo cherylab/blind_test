@@ -204,6 +204,17 @@ def right_align(s, props='text-align: right;'):
 # st.write(df.style.applymap(right_align))
 # st.write(df)
 
+def reset_state():
+    del st.session_state.order
+    del st.session_state.compOrderDict
+    del st.session_state.goodbox
+    del st.session_state.unsurebox
+    del st.session_state.badbox
+    del st.session_state.addGood
+    del st.session_state.addUnsure
+    del st.session_state.addBad
+    return
+
 def shuffle(options):
     order = [x for x in range(1, len(options) + 1)]
     # st.write("orig order", order)
@@ -213,6 +224,7 @@ def shuffle(options):
 
     compOrderDict = {}
     for i in range(len(options)):
+        # st.write(order[i], options[i])
         compOrderDict[order[i]] = options[i]
 
     # st.write("mapping of shuffle order to orig options", compOrderDict)
@@ -232,7 +244,8 @@ def blindPage():
 
         options = st.multiselect(label="Companies Included in Blind Test",
                                  options=companyOptions,
-                                 default=["AAPL-US", "MSFT-US", "GOOG-US"])
+                                 default=["AAPL-US", "MSFT-US", "GOOG-US"],
+                                 on_change=reset_state)
 
     compOrderDict, order = shuffle(options)
 
@@ -244,7 +257,7 @@ def blindPage():
     if "order" not in st.session_state:
         st.session_state['order'] = order
 
-    st.write("session state", st.session_state)
+    # st.write("session state", st.session_state)
 
     testdf = df[df.Symbol.isin(options)]
 
