@@ -213,6 +213,9 @@ def reset_state():
     del st.session_state.addGood
     del st.session_state.addUnsure
     del st.session_state.addBad
+    del st.session_state.removeGood
+    del st.session_state.removeUnsure
+    del st.session_state.removeBad
     return
 
 def shuffle(options):
@@ -291,11 +294,46 @@ def blindPage():
             st.session_state.badbox += f", {index}"
         return
 
+    def removeGoodComp():
+        if st.session_state.goodbox == "":
+            return
+        elif ~st.session_state.goodbox.contains(","):
+            st.session_state.goodbox = st.session_state.goodbox.replace(f"{index}", "")
+        elif st.session_state.goodbox.endswith(f"{index}"):
+            st.session_state.goodbox = st.session_state.goodbox.replace(f", {index}", "")
+        else:
+            st.session_state.goodbox = st.session_state.goodbox.replace(f"{index}, ", "")
+        return
+
+    def removeUnsureComp():
+        if st.session_state.unsurebox == "":
+            return
+        elif ~st.session_state.unsurebox.contains(","):
+            st.session_state.unsurebox = st.session_state.unsurebox.replace(f"{index}", "")
+        elif st.session_state.unsurebox.endswith(f"{index}"):
+            st.session_state.unsurebox = st.session_state.unsurebox.replace(f", {index}", "")
+        else:
+            st.session_state.unsurebox = st.session_state.unsurebox.replace(f"{index}, ", "")
+        return
+
+    def removeBadComp():
+        if st.session_state.badbox == "":
+            return
+        elif ~st.session_state.badbox.contains(","):
+            st.session_state.badbox = st.session_state.badbox.replace(f"{index}", "")
+        elif st.session_state.badbox.endswith(f"{index}"):
+            st.session_state.badbox = st.session_state.badbox.replace(f", {index}", "")
+        else:
+            st.session_state.badbox = st.session_state.badbox.replace(f"{index}, ", "")
+        return
+
     st.write("<br>", unsafe_allow_html=True)
     box1, s1, box2, s2, box3 = st.columns((.1, .02, .1, .02, .1))
 
     box1.write("<br>", unsafe_allow_html=True)
-    addGoodComp = box1.button(label="Add to Good Companies", key="addGood", on_click=addGoodComp)
+    addGoodComp = box1.button(label="Add to Good List", key="addGood", on_click=addGoodComp)
+    removeGoodComp = box1.button(label="Remove from Good List", key="removeGood",
+                                 on_click="removeGoodComp")
 
     goodCompanies = box1.text_input(label="Good Companies",
                                     # value=st.session_state.goodbox,
@@ -303,7 +341,9 @@ def blindPage():
                                     key="goodbox")
 
     box2.write("<br>", unsafe_allow_html=True)
-    addUnsureComp = box2.button(label="Add to Unsure Companies", key="addUnsure", on_click=addUnsureComp)
+    addUnsureComp = box2.button(label="Add to Unsure List", key="addUnsure", on_click=addUnsureComp)
+    removeUnsureComp = box2.button(label="Remove from Unsure List", key="removeUnsure",
+                                   on_click="removeUnsureComp")
 
     unsureCompanies = box2.text_input(label="Unsure Companies",
                                       # value=(', ').join(st.session_state.unsureList),
@@ -311,7 +351,9 @@ def blindPage():
                                       key="unsurebox")
 
     box3.write("<br>", unsafe_allow_html=True)
-    addBadComp = box3.button(label="Add to Bad Companies", key="addBad", on_click=addBadComp)
+    addBadComp = box3.button(label="Add to Bad List", key="addBad", on_click=addBadComp)
+    removeBadComp = box3.button(label="Remove from Bad List", key="removeBad",
+                                on_click="removeBadComp")
 
     badCompanies = box3.text_input(label="Bad Companies",
                                    # value=(', ').join(st.session_state.badList),
