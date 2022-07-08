@@ -386,16 +386,6 @@ def blindPage():
                                   "NetFixedAssets": "{:,.0f}",
                                   "TangibleCapital": "{:,.0f}"}))
 
-    # st.write(compdf)
-    # gb = GridOptionsBuilder.from_dataframe(compdf)
-    #
-    # gb.configure_column("Sales",
-    #                     type=["numericColumn", "numberColumnFilter", "customNumericFormat"],
-    #                     valueFormatter="Sales.toLocaleString('en-US', {minimumFractionDigits:1})")
-    # grid_options = gb.build()
-
-    # AgGrid(compdf, gridOptions=grid_options)
-
     st.write("<br><br>", unsafe_allow_html=True)
     showMap = st.checkbox("Show Company Mapping",
                           value=False,
@@ -407,10 +397,21 @@ def blindPage():
             if (f"{i}," in st.session_state.goodbox) | \
                     (st.session_state.goodbox == f"{i}") | \
                     (st.session_state.goodbox.endswith(f", {i}")):
-                st.write(f"{i} is good")
+                color = "green"
+            elif (f"{i}," in st.session_state.unsurebox) | \
+                    (st.session_state.unsurebox == f"{i}") | \
+                    (st.session_state.unsurebox.endswith(f", {i}")):
+                color = "orange"
+            elif (f"{i}," in st.session_state.badbox) | \
+                    (st.session_state.badbox == f"{i}") | \
+                    (st.session_state.badbox.endswith(f", {i}")):
+                color = "red"
             else:
-                st.write(f"{i} is not good")
-            st.write(f"{i}: {st.session_state.compOrderDict[i]}")
+                color = "black"
+
+            full_text = f'<p style="color:{color};">{i}: {st.session_state.compOrderDict[i]}</p>'
+            st.markdown(full_text, unsafe_allow_html=True)
+            # st.write(f"{i}: {st.session_state.compOrderDict[i]}")
 
 
 
