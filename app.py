@@ -397,19 +397,19 @@ def blindPage():
             if (f"{i}," in st.session_state.goodbox) | \
                     (st.session_state.goodbox == f"{i}") | \
                     (st.session_state.goodbox.endswith(f", {i}")):
-                color = "green"
+                color = "#38761D"
             elif (f"{i}," in st.session_state.unsurebox) | \
                     (st.session_state.unsurebox == f"{i}") | \
                     (st.session_state.unsurebox.endswith(f", {i}")):
-                color = "orange"
+                color = "#CE7E00"
             elif (f"{i}," in st.session_state.badbox) | \
                     (st.session_state.badbox == f"{i}") | \
                     (st.session_state.badbox.endswith(f", {i}")):
-                color = "red"
+                color = "#8e0000"
             else:
                 color = "black"
 
-            full_text = f'<p style="color:{color};">{i}: {st.session_state.compOrderDict[i]}</p>'
+            full_text = f'<p style="color:{color}; font-size:20px; font-weight:500">{i}: {st.session_state.compOrderDict[i]}</p>'
             st.markdown(full_text, unsafe_allow_html=True)
             # st.write(f"{i}: {st.session_state.compOrderDict[i]}")
 
