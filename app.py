@@ -213,9 +213,9 @@ def reset_state():
     del st.session_state.addGood
     del st.session_state.addUnsure
     del st.session_state.addBad
-    del st.session_state.removeGood
-    del st.session_state.removeUnsure
-    del st.session_state.removeBad
+    # del st.session_state.removeGood
+    # del st.session_state.removeUnsure
+    # del st.session_state.removeBad
     return
 
 def shuffle(options):
