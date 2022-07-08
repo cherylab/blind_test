@@ -406,7 +406,7 @@ def blindPage():
     answer_expander = st.expander("Show Company Mapping", expanded=False)
     with answer_expander:
         for i in sorted(st.session_state.compOrderDict):
-            if i in st.session_state.goodnumbers:
+            if (f"{i}," in st.session_state.goodbox) | (st.session_state.goodbox == f"{i}"):
                 st.write(f"{i} is good")
             else:
                 st.write(f"{i} is not good")
