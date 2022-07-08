@@ -404,7 +404,9 @@ def blindPage():
 
     if showMap:
         for i in sorted(st.session_state.compOrderDict):
-            if (f"{i}," in st.session_state.goodbox) | (st.session_state.goodbox == f"{i}"):
+            if (f"{i}," in st.session_state.goodbox) | \
+                    (st.session_state.goodbox == f"{i}") | \
+                    (st.session_state.goodbox.endswith(f", {i}")):
                 st.write(f"{i} is good")
             else:
                 st.write(f"{i} is not good")
