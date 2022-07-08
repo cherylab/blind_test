@@ -23,6 +23,8 @@ import plotly.io as pio
 import plot_settings
 from multiapp import MultiApp
 import streamlit as st
+from IPython.display import display
+from st_aggrid import AgGrid, GridOptionsBuilder
 
 st.set_page_config(layout='wide')
 
@@ -325,7 +327,34 @@ def blindPage():
     compdf = testdf[testdf.Symbol==st.session_state.compOrderDict[index]][reduce_cols].set_index("StartDate")
 
     st.write("<br>", unsafe_allow_html=True)
-    st.write(compdf.style.applymap(right_align))
+    # st.dataframe(compdf.style.applymap(right_align))
+    pd.options.display.float_format = '{:,.2f}'.format
+    for c in compdf.columns:
+        compdf[c] = pd.to_numeric(compdf[c].str.replace(",",""))
+    # compdf = compdf.reset_index()
+
+    st.table(compdf.style.format({"Sales": "{:,.0f}",
+                                  "EBIT": "{:,.0f}",
+                                  "EBIT_ROIC": "{:,.2f}",
+                                  "OCF": "{:,.0f}",
+                                  "OCF_ROIC": "{:,.2f}",
+                                  "ROA": "{:,.2f}",
+                                  "CurrentAssets": "{:,.0f}",
+                                  "Cash": "{:,.0f}",
+                                  "LT_Debt": "{:,.0f}",
+                                  "AccountsPayable": "{:,.0f}",
+                                  "NetFixedAssets": "{:,.0f}",
+                                  "TangibleCapital": "{:,.0f}"}))
+
+    # st.write(compdf)
+    # gb = GridOptionsBuilder.from_dataframe(compdf)
+    #
+    # gb.configure_column("Sales",
+    #                     type=["numericColumn", "numberColumnFilter", "customNumericFormat"],
+    #                     valueFormatter="Sales.toLocaleString('en-US', {minimumFractionDigits:1})")
+    # grid_options = gb.build()
+
+    # AgGrid(compdf, gridOptions=grid_options)
 
     st.write("<br><br>", unsafe_allow_html=True)
     answer_expander = st.expander("Show Company Mapping", expanded=False)
