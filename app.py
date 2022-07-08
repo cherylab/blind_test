@@ -213,7 +213,7 @@ def reset_state():
     del st.session_state.addGood
     del st.session_state.addUnsure
     del st.session_state.addBad
-    # del st.session_state.removeGood
+    del st.session_state.removeGood
     # del st.session_state.removeUnsure
     # del st.session_state.removeBad
     return
@@ -260,7 +260,7 @@ def blindPage():
     if "order" not in st.session_state:
         st.session_state['order'] = order
 
-    st.write("session state", st.session_state)
+    # st.write("session state", st.session_state)
 
     testdf = df[df.Symbol.isin(options)]
 
@@ -294,16 +294,16 @@ def blindPage():
             st.session_state.badbox += f", {index}"
         return
 
-    # def removeGoodComp():
-    #     if st.session_state.goodbox == "":
-    #         return
-    #     elif ~st.session_state.goodbox.contains(","):
-    #         st.session_state.goodbox = st.session_state.goodbox.replace(f"{index}", "")
-    #     elif st.session_state.goodbox.endswith(f"{index}"):
-    #         st.session_state.goodbox = st.session_state.goodbox.replace(f", {index}", "")
-    #     else:
-    #         st.session_state.goodbox = st.session_state.goodbox.replace(f"{index}, ", "")
-    #     return
+    def removeGoodComp():
+        if st.session_state.goodbox == "":
+            pass
+        elif st.session_state.goodbox == f"{index}":
+            st.session_state.goodbox = ""
+        elif st.session_state.goodbox.endswith(f", {index}"):
+            st.session_state.goodbox = st.session_state.goodbox.replace(f", {index}", "")
+        else:
+            st.session_state.goodbox = st.session_state.goodbox.replace(f"{index}, ", "")
+        return
     #
     # def removeUnsureComp():
     #     if st.session_state.unsurebox == "":
@@ -332,8 +332,8 @@ def blindPage():
 
     box1.write("<br>", unsafe_allow_html=True)
     addGoodComp = box1.button(label="Add to Good List", key="addGood", on_click=addGoodComp)
-    # removeGoodComp = box1.button(label="Remove from Good List", key="removeGood",
-    #                              on_click="removeGoodComp")
+    removeGoodComp = box1.button(label="Remove from Good List", key="removeGood",
+                                 on_click="removeGoodComp")
 
     goodCompanies = box1.text_input(label="Good Companies",
                                     # value=st.session_state.goodbox,
