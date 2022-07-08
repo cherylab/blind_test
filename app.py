@@ -210,6 +210,7 @@ def reset_state():
     st.session_state.goodbox = ""
     st.session_state.unsurebox = ""
     st.session_state.badbox = ""
+    st.session_state.goodnumbers = []
     del st.session_state.addGood
     del st.session_state.addUnsure
     del st.session_state.addBad
@@ -260,10 +261,12 @@ def blindPage():
     if "order" not in st.session_state:
         st.session_state['order'] = order
 
-    # st.write("session state", st.session_state)
+    st.write("session state", st.session_state)
 
     testdf = df[df.Symbol.isin(options)]
 
+    # initialize session_state variables
+    st.session_state.goodnumbers = []
     st.write("<br>", unsafe_allow_html=True)
 
     st.write("<br>", unsafe_allow_html=True)
@@ -278,6 +281,9 @@ def blindPage():
             st.session_state.goodbox += f"{index}"
         else:
             st.session_state.goodbox += f", {index}"
+
+        st.session_state.goodnumbers.append(index)
+
         return
 
     def addUnsureComp():
@@ -399,8 +405,15 @@ def blindPage():
     st.write("<br><br>", unsafe_allow_html=True)
     answer_expander = st.expander("Show Company Mapping", expanded=False)
     with answer_expander:
-        for o in sorted(st.session_state.compOrderDict):
-            st.write(f"{o}: {st.session_state.compOrderDict[o]}")
+        for i in sorted(st.session_state.compOrderDict):
+            if i in st.session_state.goodnumbers:
+                st.write(f"{i} is good")
+            else:
+                st.write(f"{i} is not good")
+            st.write(f"{i}: {st.session_state.compOrderDict[i]}")
+
+            # original_title = '<p style="font-family:Courier; color:Blue; font-size: 20px;">Original image</p>'
+            # st.markdown(original_title, unsafe_allow_html=True)
 
 
 
