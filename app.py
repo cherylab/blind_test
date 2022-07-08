@@ -338,7 +338,7 @@ def blindPage():
     box1.write("<br>", unsafe_allow_html=True)
     addGoodComp = box1.button(label="Add to Good List", key="addGood", on_click=addGoodComp)
     removeGoodComp = box1.button(label="Remove from Good List", key="removeGood",
-                                 on_click="removeGoodComp")
+                                 on_click=removeGoodComp)
 
     goodCompanies = box1.text_input(label="Good Companies",
                                     # value=st.session_state.goodbox,
