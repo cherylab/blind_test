@@ -23,8 +23,6 @@ import plotly.io as pio
 import plot_settings
 from multiapp import MultiApp
 import streamlit as st
-from IPython.display import display
-# from st_aggrid import AgGrid, GridOptionsBuilder
 
 st.set_page_config(layout='wide')
 
