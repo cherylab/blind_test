@@ -295,13 +295,18 @@ def blindPage():
         return
 
     def removeGoodComp():
+        st.write("in here")
         if st.session_state.goodbox == "":
-            pass
+            st.write("nothing")
+            # pass
         elif st.session_state.goodbox == f"{index}":
+            st.write("only one")
             st.session_state.goodbox = ""
         elif st.session_state.goodbox.endswith(f", {index}"):
+            st.write("last one")
             st.session_state.goodbox = st.session_state.goodbox.replace(f", {index}", "")
         else:
+            st.write("middle one")
             st.session_state.goodbox = st.session_state.goodbox.replace(f"{index}, ", "")
         return
     #
