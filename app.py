@@ -2,7 +2,7 @@ import pandas as pd
 import random
 import requests
 import json
-from pandas.io.json import json_normalize
+# from pandas.io.json import json_normalize
 from functools import reduce
 from datetime import datetime, timedelta
 import openpyxl
