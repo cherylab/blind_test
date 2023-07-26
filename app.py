@@ -44,7 +44,7 @@ background-color: "green";
 # .first-of-type button {
 
 # LOAD FILES
-@st.cache
+@st.cache_data
 def load_files():
     # summary - sorted list
     # chgsort = pd.read_csv('list_of_ten_2020.csv', na_values=['#VALUE!', '#DIV/0!', '#SPILL!'])
@@ -73,7 +73,7 @@ def load_files():
     return roic_importL, betadfL, momo2021dfL, prioryearL, beta20dfL, import_2022L, beta21dfL
 
 # CREATE ROIC_FILTERED
-@st.cache
+@st.cache_data
 def format_dfs(roic_import, betadf, momo2021df, prioryear, beta20df, import_2022, beta21df):
     # combine symbol and start date to create unique ID
     roic_import['Instance'] = roic_import['Symbol'].astype(str) + '_' + \
